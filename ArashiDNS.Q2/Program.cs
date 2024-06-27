@@ -31,29 +31,36 @@ namespace ArashiDNS.Q2
                               $"Copyright (c) {DateTime.Now.Year} Milkey Tan. Code released under the MIT License"
             };
             cmd.HelpOption("-?|-h|--help");
+
             var isZh = Thread.CurrentThread.CurrentCulture.Name.Contains("zh");
             var upArgument = cmd.Argument("target",
                 isZh ? "目标上游 DNS 端点" : "Target upstream DNS service endpoint");
-            var ipOption = cmd.Option<string>("-l|--listen <IPEndPoint>",
+            var ipOption = cmd.Option("-l|--listen <IPEndPoint>",
                 isZh ? "监听的地址与端口" : "Set server listening address and port", CommandOptionType.SingleValue);
-            var pemOption = cmd.Option<string>("-p|--pem <Path>",
+            var pemOption = cmd.Option("-p|--pem <Path>",
                 isZh ? "PEM 证书文件路径" : "PEM certificate file path", CommandOptionType.SingleValue);
-            var keyOption = cmd.Option<string>("-k|--key <Path>",
+            var keyOption = cmd.Option("-k|--key <Path>",
                 isZh ? "私钥文件路径" : "Private key file path", CommandOptionType.SingleValue);
+            var crtsOption = cmd.Option("-c|--crts <URL>",
+                isZh ? "证书链，CA 证书 URL" : "Certificate chain, CA certificate URL", CommandOptionType.MultipleValue);
             var wOption = cmd.Option<int>("-w <timeout>",
                 isZh ? "等待回复的超时时间(毫秒)。" : "Timeout time to wait for reply", CommandOptionType.SingleValue);
 
-            if (args.Any(x => x.StartsWith("--crts")))
-            {
-                foreach (var item in args.FirstOrDefault(x => x.StartsWith("--crts="))?.Split("=").LastOrDefault()?.Split(',')!)
-                {
-                    Certificate2Collection.Add(X509Certificate2.CreateFromPem(new HttpClient()
-                        .GetStringAsync(item).Result));
-                }
-            }
-
             cmd.OnExecuteAsync(async c =>
             {
+                foreach (var item in crtsOption.Values)
+                {
+                    try
+                    {
+                        Certificate2Collection.Add(X509Certificate2.CreateFromPem(new HttpClient()
+                            .GetStringAsync(item ?? string.Empty, c).Result));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+
                 if (upArgument.HasValue) UpEndPoint = IPEndPoint.Parse(upArgument.Value!).Address;
                 if (ipOption.HasValue()) ListenerEndPoint = IPEndPoint.Parse(ipOption.Value()!);
                 if (wOption.HasValue()) Timeout = int.Parse(wOption.Value()!);
