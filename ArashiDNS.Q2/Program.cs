@@ -171,8 +171,6 @@ namespace ArashiDNS.Q2
             byte additional = 0;
             try
             {
-                stream.ReadTimeout = 500;
-
                 var len = await stream.ReadAsync(qBytes);
                 if (len == 0) return;
 
@@ -186,13 +184,9 @@ namespace ArashiDNS.Q2
                 qBytes = qListBytes.ToArray();
                 var query = DnsMessage.Parse(qBytes);
 
-                //Console.WriteLine(BitConverter.ToString(qBytes));
-                //Console.WriteLine(host + ":" + query.Questions.First());
-
                 if (query.IsEDnsEnabled)
                     query.EDnsOptions?.Options.RemoveAll(x => x.Type != EDnsOptionType.ClientSubnet);
 
-                stream.WriteTimeout = 500;
                 var response = await new DnsClient(UpEndPoint, Timeout).SendMessageAsync(query);
 
                 if (response != null)
