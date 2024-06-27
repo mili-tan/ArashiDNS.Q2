@@ -11,7 +11,7 @@ namespace ArashiDNS.Q2
     internal class Program
     {
         public static IPEndPoint ListenerEndPoint = new(IPAddress.Any, 853);
-        public static IPAddress UpStream = IPAddress.Parse("8.8.8.8");
+        public static IPAddress UpEndPoint = IPAddress.Parse("8.8.8.8");
         public static int Timeout = 1000;
         public static X509Certificate2Collection Certificate2Collection = new();
 
@@ -54,7 +54,7 @@ namespace ArashiDNS.Q2
 
             cmd.OnExecuteAsync(async c =>
             {
-                if (upArgument.HasValue) UpStream = IPEndPoint.Parse(upArgument.Value!).Address;
+                if (upArgument.HasValue) UpEndPoint = IPEndPoint.Parse(upArgument.Value!).Address;
                 if (ipOption.HasValue()) ListenerEndPoint = IPEndPoint.Parse(ipOption.Value()!);
                 if (wOption.HasValue()) Timeout = int.Parse(wOption.Value()!);
 
@@ -186,7 +186,7 @@ namespace ArashiDNS.Q2
                     query.EDnsOptions?.Options.RemoveAll(x => x.Type != EDnsOptionType.ClientSubnet);
 
                 stream.WriteTimeout = 500;
-                var response = await new DnsClient(UpStream, Timeout).SendMessageAsync(query);
+                var response = await new DnsClient(UpEndPoint, Timeout).SendMessageAsync(query);
 
                 if (response != null)
                 {
