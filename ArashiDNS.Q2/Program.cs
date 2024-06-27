@@ -25,10 +25,10 @@ namespace ArashiDNS.Q2
         {
             var cmd = new CommandLineApplication
             {
-                Name = "ArashiDNS.KS",
-                Description = "ArashiDNS.KS - DNS over KCP Server" +
+                Name = "ArashiDNS.Q2",
+                Description = "ArashiDNS.Q2 - DNS over QUIC Server" +
                               Environment.NewLine +
-                              $"Copyright (c) {DateTime.Now.Year} Milkey Tan. Code released under the MPL License"
+                              $"Copyright (c) {DateTime.Now.Year} Milkey Tan. Code released under the MIT License"
             };
             cmd.HelpOption("-?|-h|--help");
             var isZh = Thread.CurrentThread.CurrentCulture.Name.Contains("zh");
@@ -52,14 +52,14 @@ namespace ArashiDNS.Q2
                 }
             }
 
-            cmd.OnExecute(async () =>
+            cmd.OnExecuteAsync(async c =>
             {
                 if (upArgument.HasValue) UpStream = IPEndPoint.Parse(upArgument.Value!).Address;
                 if (ipOption.HasValue()) ListenerEndPoint = IPEndPoint.Parse(ipOption.Value()!);
                 if (wOption.HasValue()) Timeout = int.Parse(wOption.Value()!);
 
-                var pem = await File.ReadAllTextAsync(pemOption.Value() ?? "crt.pem");
-                var key = await File.ReadAllTextAsync(keyOption.Value() ?? "key.key");
+                var pem = File.ReadAllText(pemOption.Value() ?? "crt.crt");
+                var key = File.ReadAllText(keyOption.Value() ?? "key.key");
                 var cert = X509Certificate2.CreateFromPem(pem, key);
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -91,8 +91,8 @@ namespace ArashiDNS.Q2
                     }
                 };
 
-                var listener = await QuicListener.ListenAsync(listenerOptions);
-                for (var i = 0; i < 4; i++) await Task.Factory.StartNew(() => AcceptQuicConnection(listener));
+                var listener = await QuicListener.ListenAsync(listenerOptions, c);
+                for (var i = 0; i < 4; i++) await Task.Factory.StartNew(() => AcceptQuicConnection(listener), c);
                 Console.WriteLine("Application started. Press Ctrl+C / q to shut down.");
 
                 if (!Console.IsInputRedirected && Console.KeyAvailable)
