@@ -47,7 +47,7 @@ namespace ArashiDNS.QC2
                     new TcpServerTransport(ListenerEndPoint));
                 dnsServer.QueryReceived += DnsServerOnQueryReceived;
                 dnsServer.Start();
-
+                Console.WriteLine("\ud83d\udea7 Not working yet. Under Debugging. \ud83d\udea7");
                 Console.WriteLine("ArashiDNS.QC2 - DNS over QUIC Client");
                 Console.WriteLine("Now listening on: " + ListenerEndPoint);
                 Console.WriteLine("The server is: " + ServerEndPoint);
@@ -71,6 +71,7 @@ namespace ArashiDNS.QC2
         {
             try
             {
+                // 🚧 Not working yet. Under Debugging. 🚧
                 if (e.Query is not DnsMessage query) return;
                 var dnsBytes = query.Encode().ToArraySegment(false).ToArray();
 
