@@ -1,11 +1,14 @@
 ﻿using ARSoft.Tools.Net.Dns;
+using McMaster.Extensions.CommandLineUtils;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Quic;
 using System.Net.Security;
-using System.Net;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Security.Cryptography.X509Certificates;
-using McMaster.Extensions.CommandLineUtils;
 
+[assembly: RequiresPreviewFeatures]
 namespace ArashiDNS.Q2
 {
     internal class Program
@@ -207,7 +210,7 @@ namespace ArashiDNS.Q2
                 }
 
                 var bytes = response.Encode().ToArraySegment(false).ToList();
-                if (additional != 0) bytes.InsertRange(0, new byte[] { 0x00, additional });
+                if (additional != 0) bytes.InsertRange(0, GetPrefix(bytes.ToArray()));
                 await stream.WriteAsync(bytes.ToArray());
             }
             catch (IOException)
@@ -224,6 +227,11 @@ namespace ArashiDNS.Q2
                 //quicStream.Close();
                 await stream.DisposeAsync();
             }
+        }
+
+        public static byte[] GetPrefix(byte[] data)
+        {
+            return [(byte) ((data.Length + 2) >> 8), (byte) (data.Length + 2)];
         }
     }
 }
