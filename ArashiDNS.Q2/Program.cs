@@ -209,9 +209,14 @@ namespace ArashiDNS.Q2
                     response.ReturnCode = ReturnCode.ServerFailure;
                 }
 
-                var bytes = response.Encode().ToArraySegment(false).ToList();
-                if (additional != 0) bytes.InsertRange(0, GetPrefix(bytes.ToArray()));
-                await stream.WriteAsync(bytes.ToArray());
+                var bytes = response.Encode().ToArraySegment(false).ToArray();
+                var prefixedBytes = new byte[bytes.Length + 2];
+
+                prefixedBytes[0] = (byte) (bytes.Length >> 8);
+                prefixedBytes[1] = (byte) (bytes.Length);
+
+                Buffer.BlockCopy(bytes, 0, prefixedBytes, 2, bytes.Length);
+                await stream.WriteAsync(prefixedBytes);
             }
             catch (IOException)
             {
@@ -227,11 +232,6 @@ namespace ArashiDNS.Q2
                 //quicStream.Close();
                 await stream.DisposeAsync();
             }
-        }
-
-        public static byte[] GetPrefix(byte[] data)
-        {
-            return [(byte) ((data.Length + 2) >> 8), (byte) (data.Length + 2)];
         }
     }
 }
