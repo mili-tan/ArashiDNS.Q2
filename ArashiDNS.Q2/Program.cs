@@ -1,6 +1,6 @@
-﻿using ARSoft.Tools.Net.Dns;
+﻿using ARSoft.Tools.Net;
+using ARSoft.Tools.Net.Dns;
 using McMaster.Extensions.CommandLineUtils;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Quic;
 using System.Net.Security;
@@ -26,6 +26,7 @@ namespace ArashiDNS.Q2
 
         static async Task Main(string[] args)
         {
+
             var cmd = new CommandLineApplication
             {
                 Name = "ArashiDNS.Q2",

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArashiDNS.Q2", "ArashiDNS.Q2\ArashiDNS.Q2.csproj", "{7E7E7321-E943-4D2A-A34B-03E2C4A73EE3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArashiDNS.QC2", "ArashiDNS.QC2\ArashiDNS.QC2.csproj", "{80DD6E66-4712-453F-A824-3642F17B6B9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7E7E7321-E943-4D2A-A34B-03E2C4A73EE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E7E7321-E943-4D2A-A34B-03E2C4A73EE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E7E7321-E943-4D2A-A34B-03E2C4A73EE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80DD6E66-4712-453F-A824-3642F17B6B9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80DD6E66-4712-453F-A824-3642F17B6B9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80DD6E66-4712-453F-A824-3642F17B6B9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80DD6E66-4712-453F-A824-3642F17B6B9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
