@@ -22,7 +22,7 @@ namespace ArashiDNS.QC2
                 Name = "ArashiDNS.QC2",
                 Description = "ArashiDNS.QC2 - DNS over QUIC Client" +
                               Environment.NewLine +
-                              $"Copyright (c) {DateTime.Now.Year} Milkey Tan. Code released under the MPL License"
+                              $"Copyright (c) {DateTime.Now.Year} Milkey Tan. Code released under the MIT License"
             };
             cmd.HelpOption("-?|-h|--help");
             var isZh = Thread.CurrentThread.CurrentCulture.Name.Contains("zh");
@@ -30,8 +30,9 @@ namespace ArashiDNS.QC2
                 isZh ? "目标 DNS over QUIC 端点" : "Target DNS over QUIC service endpoint");
             var ipOption = cmd.Option<string>("-l|--listen <IPEndPoint>",
                 isZh ? "监听的地址与端口" : "Set server listening address and port", CommandOptionType.SingleValue);
-            var logOption = cmd.Option("--log", isZh ? "打印查询与响应日志。" : "Print query and response logs",
+            var logOption = cmd.Option("--log", isZh ? "打印查询与响应日志" : "Print query and response logs",
                 CommandOptionType.NoValue);
+            cmd.ShowHelp();
 
             cmd.OnExecute(async () =>
             {
