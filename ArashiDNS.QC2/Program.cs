@@ -32,7 +32,6 @@ namespace ArashiDNS.QC2
                 isZh ? "监听的地址与端口" : "Set server listening address and port", CommandOptionType.SingleValue);
             var logOption = cmd.Option("--log", isZh ? "打印查询与响应日志" : "Print query and response logs",
                 CommandOptionType.NoValue);
-            cmd.ShowHelp();
 
             cmd.OnExecute(async () =>
             {
@@ -110,7 +109,6 @@ namespace ArashiDNS.QC2
 
             private readonly IPEndPoint serverEndPoint;
             private readonly SslClientAuthenticationOptions sslOptions;
-            private readonly SemaphoreSlim connectionLock = new SemaphoreSlim(1, 1);
             private static IPAddress[]? serverAddresses;
 
             public DoQClient(string serverHost, int serverPort = 853)
@@ -169,24 +167,13 @@ namespace ArashiDNS.QC2
                     Console.WriteLine(e);
                 }
 
-                if (connection == null)
+                connection ??= await QuicConnection.ConnectAsync(new QuicClientConnectionOptions
                 {
-                    await connectionLock.WaitAsync(cancellationToken);
-                    try
-                    {
-                        connection ??= await QuicConnection.ConnectAsync(new QuicClientConnectionOptions
-                        {
-                            DefaultStreamErrorCode = 0x2, // DOQ_PROTOCOL_ERROR
-                            DefaultCloseErrorCode = 0x2,
-                            RemoteEndPoint = serverEndPoint,
-                            ClientAuthenticationOptions = sslOptions
-                        }, cancellationToken);
-                    }
-                    finally
-                    {
-                        connectionLock.Release();
-                    }
-                }
+                    DefaultStreamErrorCode = 0x2, // DOQ_PROTOCOL_ERROR
+                    DefaultCloseErrorCode = 0x2,
+                    RemoteEndPoint = serverEndPoint,
+                    ClientAuthenticationOptions = sslOptions
+                }, cancellationToken);
             }
 
             private byte[] SerializeDnsMessageWithLength(DnsMessage message)
@@ -228,7 +215,6 @@ namespace ArashiDNS.QC2
 
             public void Dispose()
             {
-                connectionLock?.Dispose();
                 connection?.DisposeAsync();
             }
         }
