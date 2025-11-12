@@ -171,18 +171,13 @@ namespace ArashiDNS.Q2
         private static async Task HandleQuicStreamRequest(QuicStream stream)
         {
             var qBytes = new byte[512];
-            byte additional = 0;
             try
             {
                 var len = await stream.ReadAsync(qBytes);
                 if (len == 0) return;
 
                 var qListBytes = qBytes.Take(len).ToList();
-                if (qListBytes[1] != 0)
-                {
-                    additional = qListBytes[1];
-                    qListBytes.RemoveRange(0, 2);
-                }
+                if (qListBytes[1] != 0) qListBytes.RemoveRange(0, 2);
 
                 qBytes = qListBytes.ToArray();
                 var query = DnsMessage.Parse(qBytes);
