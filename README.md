@@ -20,6 +20,21 @@ Options:
   -c|--crts <URL>           Certificate chain, CA certificate URL
   -w <timeout>              Timeout time to wait for reply (ms)
 ```
+```
+ArashiDNS.QC2 - DNS over QUIC Client
+Copyright (c) 2025 Milkey Tan. Code released under the MIT License
+
+Usage: ArashiDNS.QC2 [options] <target>
+
+Arguments:
+  target                    Target DNS over QUIC service endpoint
+
+Options:
+  -?|-h|--help              Show help information.
+  -l|--listen <IPEndPoint>  Set server listening address and port
+  --log                     Print query and response logs
+```
+
 ## License
 
 Copyright (c) 2024 Milkey Tan. Code released under the [MIT License](https://github.com/mili-tan/ArashiDNS.Aha/blob/main/LICENSE). 
