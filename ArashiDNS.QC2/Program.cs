@@ -142,7 +142,7 @@ namespace ArashiDNS.QC2
                 query.TransactionID = 0;
 
                 await using var stream = await connection.OpenOutboundStreamAsync(QuicStreamType.Bidirectional, cancellationToken);
-                var queryData = SerializeDnsMessageWithLength(query);
+                var queryData = SerializeDnsMessage(query);
 
                 await stream.WriteAsync(queryData, cancellationToken);
                 stream.CompleteWrites();
@@ -176,7 +176,7 @@ namespace ArashiDNS.QC2
                 }, cancellationToken);
             }
 
-            private byte[] SerializeDnsMessageWithLength(DnsMessage message)
+            private byte[] SerializeDnsMessage(DnsMessage message)
             {
                 var messageData = message.Encode().ToArraySegment(false).ToArray();
                 var result = new byte[messageData.Length + 2];
@@ -196,7 +196,6 @@ namespace ArashiDNS.QC2
                 if (bytesRead != 2) return null;
 
                 var messageLength = (ushort)((lengthBuffer[0] << 8) | lengthBuffer[1]);
-
                 if (messageLength == 0) return null;
 
                 var messageBuffer = new byte[messageLength];
@@ -210,7 +209,7 @@ namespace ArashiDNS.QC2
                     bytesRead += chunk;
                 }
 
-                return bytesRead != messageLength ? null : messageBuffer;
+                return messageBuffer;
             }
 
             public void Dispose()
